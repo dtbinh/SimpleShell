@@ -5,7 +5,6 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <fcntl.h>
-#include "homework3.h"
 
 
 void redirect(char* input[], char* output)

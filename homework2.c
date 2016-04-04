@@ -5,8 +5,6 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <vector> // std::vector
-#include <algorithm> // std::copy
 #include "homework3.h"
 
 #define PARSED_COMMAND_LEN 20
@@ -85,16 +83,10 @@ void freeArray(char* array[]) {
 
 int handleRedirectOrPipe(char* parsedCommand[], Options selected) {
     int split = selected.splitChar;
+    parsedCommand[split] = NULL;
     
-    std::vector<char*> firstHalf(split);
-    std::copy(parsedCommand, parsedCommand+split+1, firstHalf.begin());
-    firstHalf[split] = NULL;
-
-    std::vector<char*> secondHalf(PARSED_COMMAND_LEN-split);
-    std::copy(parsedCommand+split+1, parsedCommand+PARSED_COMMAND_LEN, secondHalf.begin());
-
     if(selected.redirect) {
-        redirect(&firstHalf[0], secondHalf[0]);
+        redirect(parsedCommand, parsedCommand[split+1]);
         exit(0);
     }
 

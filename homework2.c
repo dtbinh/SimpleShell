@@ -43,9 +43,9 @@ Options parseTheCommand(char command[], char *parsedCommand[]) {
     // This ensures that the command only runs in the background if the last character 
     // in the array is &.
     if(*prvArg == '&')
-      selected.background = 1;
+        selected.background = 1;
     else {
-      selected.background = 0;
+        selected.background = 0;
     }
 
     if(!strcmp(arg, ">>")) {
@@ -90,7 +90,12 @@ int handleRedirectOrPipe(char* parsedCommand[], Options selected) {
         exit(0);
     }
 
-    return 0;
+    if(selected.pipe) {
+        pipe_output(parsedCommand, parsedCommand+split+1);
+        exit(0);
+    }
+
+    return -1;
 }
 
 int main()

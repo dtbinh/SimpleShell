@@ -1,0 +1,4 @@
+To run use included makefile, just use the default "make"
+Program compiles as "shell" so usage is /path/to/shell.
+
+Bonus not completed.

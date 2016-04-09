@@ -28,7 +28,8 @@ Options parseTheCommand(char command[], char *parsedCommand[]) {
   char* arg = strtok(command, " \n");
   int counter = 0;
   char* prvArg = NULL;
-  Options selected;
+  // Create optoins struct with initial values 
+  Options selected = {.error=0, .pipe=0, .redirect=0};
 
   // Run loop until strtok reads a NULL value or we read in too many arguments for the array.
   while (arg != NULL && counter < PARSED_COMMAND_LEN) {
@@ -48,10 +49,21 @@ Options parseTheCommand(char command[], char *parsedCommand[]) {
         selected.background = 0;
     }
 
+    // Check if the current token is a redirect or pipe command and set the appropiate options
     if(!strcmp(arg, ">>")) {
+        // Error handling so multiple pipes or redirects show error message and set error flag.
+        if(selected.redirect || selected.pipe) {
+            printf("Error: Multiple pipes or redirects are not supported");
+            selected.error = 1;
+        }
         selected.redirect = 1;
         selected.splitChar = counter - 1;
     } else if(*arg == '|') {
+        // Error handling so multiple pipes or redirects show error message and set error flag.
+        if(selected.redirect || selected.pipe) {
+            printf("Error: Multiple pipes or redirects are not supported");
+            selected.error = 1;
+        }
         selected.pipe = 1;
         selected.splitChar = counter - 1;
     }
@@ -81,15 +93,22 @@ void freeArray(char* array[]) {
     }
 }
 
+// Funciton that is called whenever a redirect or pipe character is found to call 
+// the appropiate function with the correct input
 int handleRedirectOrPipe(char* parsedCommand[], Options selected) {
     int split = selected.splitChar;
+    // Set the location of the pipe or redirect to NULL so exec() sees it as the
+    // end of the first command. The second half of the array can be passed as 1 past
+    // this character
     parsedCommand[split] = NULL;
     
+    // If redirect is found call redirect funciton with correct inputs
     if(selected.redirect) {
         redirect(parsedCommand, parsedCommand[split+1]);
         exit(0);
     }
 
+    // If pipe is found call pipe function with correct inputs
     if(selected.pipe) {
         pipe_output(parsedCommand, parsedCommand+split+1);
         exit(0);
@@ -112,8 +131,9 @@ int main()
   while((strcmp (commandline,"exit") != 0)
      && (strcmp (commandline,"quit") != 0))
   {
-    if ( (pid = fork ())== 0)
+    if ( (pid = fork ())== 0 && !selected.error) // Don't run if error is found in input
     {
+      // If pipe or redirect are selected call the function to handle them
       if(selected.redirect == 1 || selected.pipe == 1) {
           handleRedirectOrPipe(parsedCommand, selected);
       } else {

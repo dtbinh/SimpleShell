@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-
+// Add parameters for the command to run and the filename to output to
 void redirect(char* input[], char* output)
 
 {
@@ -23,7 +23,7 @@ void redirect(char* input[], char* output)
   if (pid1==0) {//code for child 1 starts
     dup2(fds[1],1);// Child 1 connects stdout to upstream end of pipe and
     close(fds[0]);// closes the downstream end of the pipe
-    //execlp("more", "more", "myfile.txt",NULL);
+    // Execure the command using the pipe file descriptor as the output
     execvp(input[0], input);
   }//code for child 1 ends
 
@@ -34,6 +34,7 @@ void redirect(char* input[], char* output)
   }
 
   if (pid2==0){ //code for child 2 starts
+    // Open the given file for output
     fd=open(output,O_RDWR|O_CREAT,0600);
     dup2(fds[0],0); // Child 2 connects stdin to downstream end of pipe and
     close(fds[1]);// closes the upstream end of the pipe

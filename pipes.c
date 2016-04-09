@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <sys/wait.h>
 
+// Add parameters for knowing which command to pipe into the other
 void pipe_output(char* command1[], char* command2[]){
   int fds[2];
   pid_t id1,id2;
@@ -16,7 +17,7 @@ void pipe_output(char* command1[], char* command2[]){
   if (id1==0){
     dup2(fds[0],0);
     close(fds[1]);
-    //execlp("sort","sort",NULL);
+    // Execure the second command using the pipe file descriptor as the input
     execvp(command2[0], command2);
   }
   if ((id2 =fork())< 0){
@@ -27,7 +28,7 @@ void pipe_output(char* command1[], char* command2[]){
   if (id2 == 0) {
     dup2(fds[1],1);
     close(fds[0]);
-    //execlp("who", "who",NULL);
+    // Execure the first command using the pipe file descriptor as the output
     execvp(command1[0], command1);
   }
 

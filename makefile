@@ -11,8 +11,8 @@ redirect.o: redirect.c
 pipes.o: pipes.c
 	gcc -c -Wall -std=c99 pipes.c -o pipes.o
 
-debug: homework2.c redirect.c
-	gcc -Wall -g -std=c99 homework2.c redirect.c -o hw3debug
+debug: homework2.c redirect.c pipes.c
+	gcc -Wall -g -std=c99 homework2.c pipes.c redirect.c -o hw3debug
 
 clean:
-	rm -f *.o hw2 shell hw2debug new
+	rm -f *.o hw2 shell hw3debug new

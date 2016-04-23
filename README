@@ -1,4 +1,15 @@
-To run use included makefile, just use the default "make"
-Program compiles as "shell" so usage is /path/to/shell.
+Description:
 
-Bonus not completed.
+Simple shell I made for my Operating Systems class.
+You can run all your usual commands from it, including 
+running programs in the background by using "&" at the end
+of the line. Also supports piping and redirecting, but only 
+one per command. 
+
+Usage:
+
+To build use the included makefile with the default target.
+
+> make
+
+Program compiles as "shell" so usage is /path/to/shell.
